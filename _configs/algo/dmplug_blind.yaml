@@ -1,0 +1,13 @@
+# Copyright (c) 2023, NVIDIA CORPORATION.  All rights reserved
+
+name: "dmplug_blind"
+denoise: False
+sigma_y: 0.005
+eta: 0.0
+lr: 0.01 #needs tuning
+num_inference_steps: 3 #num opt steps for x
+sdedit: False #for ddims
+lrk: 0.1
+epochs: 10000 # SR, inpainting: 5,000, nonlinear deblurring: 10,000
+is_conditional: True
+

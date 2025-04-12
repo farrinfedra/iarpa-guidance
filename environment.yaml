@@ -1,0 +1,21 @@
+name: oc2
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - torch
+      - torchvision
+      - torchaudio
+      - torchmetrics
+      - matplotlib
+      - torchdiffeq
+      - tqdm
+      - gdown
+      - seaborn
+      - lmdb
+      - diffusers
+      - hydra-core
+      - --extra-index-url https://download.pytorch.org/whl/cu116

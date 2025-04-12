@@ -1,0 +1,6 @@
+name: "deblur_nl"
+opt_yml_path: "./bkse/options/generate_blur/default.yml"
+pretrained_model_path: "bkse/experiments/pretrained/GOPRO_wVAE.pth"
+noise: #n in A(x) + n
+  name: "gaussian"
+  sigma: 0.01

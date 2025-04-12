@@ -1,0 +1,10 @@
+# Copyright (c) 2023, NVIDIA CORPORATION.  All rights reserved
+
+name: "FFHQ_256x256"
+root: "/extra/ucibdl1/shared/data/ffhq_lmdb"
+split: "val"
+image_size: 256
+channels: 3
+transform: "default"
+subset: 1000
+decode_key: false

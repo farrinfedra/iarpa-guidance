@@ -1,0 +1,20 @@
+name: "ndtm"
+is_conditional: True
+denoise: False
+sigma_y: 0.0
+eta: 0.0
+u_lr: 0.5 #needs tuning
+u_lr_scheduler: "linear" #const or linear
+M: 3 #num opt steps for u
+sdedit: False #for ddim
+w_terminal: 1.0
+w_control: none #or ddim or ddpm
+w_score: none #reddiff_<func> or ddim or ddpm
+init_xT: "random"
+init_control: "zero" # Options: zero, random, causal-zero, causal-random
+plot_u: False
+
+
+combine_fn:
+  name: "additive" #possible values: additive, elementwise, etc.
+  gamma_t: 1.0 #u_t strength

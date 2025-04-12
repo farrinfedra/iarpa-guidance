@@ -1,0 +1,19 @@
+name: "cntmc"
+is_conditional: True
+denoise: False
+sigma_y: 0.0
+u_lr: 0.5 #needs tuning
+lam: 0.0
+num_eps: 1e-9
+u_lr_scheduler: "linear" #const or linear
+M: 2 #num opt steps for u
+sdedit: False #for ddim
+w_terminal: 1.0
+w_control: zero #or ddim or ddpm
+w_score: zero #reddiff_<func> or ddim or ddpm
+init_xT: "random"
+init_control: "zero" # Options: zero, random, causal-zero, causal-random
+
+combine_fn:
+  name: "additive" #possible values: additive, elementwise, etc.
+  gamma_t: 1.0 #u_t strength

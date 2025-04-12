@@ -1,0 +1,5 @@
+name: coc
+denoise: False
+w: 1.0
+deg: bicubic4
+sigma_y: 0

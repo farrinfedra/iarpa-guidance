@@ -1,0 +1,5 @@
+name: "bicubic"
+factor: ??
+noise: #n in A(x) + n
+  name: none
+  sigma: none

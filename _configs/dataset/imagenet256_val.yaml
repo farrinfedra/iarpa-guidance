@@ -1,0 +1,9 @@
+# Copyright (c) 2023, NVIDIA CORPORATION.  All rights reserved
+
+name: "ImageNet_256x256"
+root: "/extra/ucibdl0/shared/data/ilsvrc2012/pro/"
+split: "val"
+image_size: 256
+channels: 3
+transform: "diffusion"
+subset_txt: "misc/sr3_top1k.txt"  

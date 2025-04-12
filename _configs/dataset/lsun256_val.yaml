@@ -1,0 +1,11 @@
+# Copyright (c) 2023, NVIDIA CORPORATION.  All rights reserved
+
+name: "LSUN" #bedroom
+root: "/extra/ucibdl0/shared/data/LSUN/bedroom_val_lmdb/"
+split: "val"
+image_size: 256
+channels: 3
+transform: "resize"
+subset: 1000
+decode_key: true
+is_encoded: true

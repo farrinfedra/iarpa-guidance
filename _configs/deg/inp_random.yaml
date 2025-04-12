@@ -1,0 +1,3 @@
+name: "inp_random"
+mask_prob: 0.9
+mask_count: 1000
