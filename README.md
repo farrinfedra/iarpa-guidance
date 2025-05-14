@@ -1,4 +1,5 @@
 <h1 align="center">Variational Control for Guidance in Diffusion Models</h1>
+<p align="center" style="font-size: 1.5em;"><strong>ICML&nbsp;2025</strong></p>
 
 <p align="center">
   <a href="https://arxiv.org/abs/2502.03686">
