@@ -1,6 +1,6 @@
 <h1 align="center">Variational Control for Guidance in Diffusion Models</h1>
-<p align="center" style="font-size: 1.5em;"><strong>ICML&nbsp;2025</strong></p>
-
+<h3 align="center"><strong>ICML&nbsp;2025</strong></h3>
+<br>
 <p align="center">
   <a href="https://arxiv.org/abs/2502.03686">
     <img src="https://img.shields.io/badge/arXiv-2502.03686-b31b1b.svg" alt="arXiv">
@@ -22,7 +22,6 @@
   &emsp;<b>·</b>&emsp;
   <a href="https://www.stephanmandt.com/" target="_blank">Stephan Mandt</a>
 </div>
-
 <br>
 
 ## 🧠 Overview
