@@ -1,13 +1,12 @@
-import os
 import hashlib
-import requests
-from tqdm import tqdm
-import gdown
+import os
 
+import gdown
+import requests
 import torch.distributed as dist
+from tqdm import tqdm
 
 from .distributed import get_logger
-
 
 URL_MAP = {
     "cifar10": "https://heibox.uni-heidelberg.de/f/869980b53bf5416c8a28/?dl=1",
@@ -59,7 +58,9 @@ MD5_MAP = {
 
 def download(url, local_path, chunk_size=1024):
     if dist.get_rank() == 0:
-        if 'drive.google.com' in url:
+        from urllib.parse import urlparse
+        parsed_url = urlparse(url)
+        if parsed_url.hostname == "drive.google.com" or parsed_url.hostname.endswith(".drive.google.com"):
             gdown.download(url, local_path, quiet=False)
         else:
             os.makedirs(os.path.split(local_path)[0], exist_ok=True)
