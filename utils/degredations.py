@@ -987,6 +987,21 @@ def build_one_degredation_model(cfg, h, w, c, deg: str):
 
     elif deg == "bid":
         H = BlindImageDeblurring(cfg, device)
+
+    elif 'saturation' in deg:
+        beta = cfg.deg.beta
+        ste = cfg.deg.ste
+        alpha = cfg.deg.alpha
+        if 'oversaturation' in deg:
+            beta = -beta
+            H = RandomBrightnessContrast(beta=-beta, alpha=alpha,
+                                        brightness_by_max=True, #default in albumentations
+                                        ste=ste)
+        else: 
+            H = RandomBrightnessContrast(beta=+beta, alpha=alpha,
+                                        brightness_by_max=True, #default in albumentations
+                                        ste=ste)         
+        
     else:
         raise ValueError(f"Degredation model {deg} does not exist.")
 
@@ -1069,6 +1084,99 @@ class NonlinearBlurOperator(NonLinearOperator, H_functions):
         return self.forward(data, **kwargs)
 
     def H_pinv(self, x):
+        return self.H(x)
+
+# ------------------------------------------------------------------
+#  RandomBrightnessContrast   (Albumentations-exact, differentiable)
+# ------------------------------------------------------------------
+class RandomBrightnessContrast(H_functions, NonLinearOperator):
+    r"""
+    Implements Albumentations RandomBrightnessContrast in PyTorch.
+
+    Args
+    ----
+    beta              : float
+        Brightness shift β.  +0.8 for lighter, –0.8 for darker.
+    alpha             : float, default 1.0
+        Contrast gain α = 1 + Δc.  Keep 1.0 when contrast_limit = 0.
+    brightness_by_max : bool, default True
+        If True (Albumentations default), the brightness reference M
+        is max_pixel_value (=1.0 for tensors in [0,1]).
+        If False, M is the mean of the input image.
+    ste               : bool, default False
+        If True, uses a straight-through estimator: forward pass is
+        hard clip, backward pass uses a soft-clamp so gradients flow
+        even where saturation occurs.
+    tau               : float, default 40.0
+        Sharpness of the soft-clamp used when ste=True.
+    """
+
+    def __init__(self,
+                 beta: float,
+                 alpha: float = 1.0,
+                 brightness_by_max: bool = True,
+                 ste: bool = False,
+                 tau: float = 40.0):
+
+        super().__init__()
+        self.beta = float(beta)
+        self.alpha = float(alpha)
+        self.by_max = bool(brightness_by_max)
+        self.ste = bool(ste)
+        self.tau = float(tau)
+
+    # ---------- helpers ----------
+    @staticmethod
+    def _dtype_bounds(x, max_val=1.0):
+        if x.dtype.is_floating_point:
+            return 0.0, float(max_val)
+        info = torch.iinfo(x.dtype)
+        return float(info.min), float(info.max)
+
+    @staticmethod
+    def _img_mean(x):
+        return x.mean(dim=(1, 2, 3), keepdim=True) if x.dim() == 4 else x.mean()
+
+    @staticmethod
+    def _soft_clamp(z, lo, hi, tau=40.0):
+        """Smooth approximation of clamp via softplus."""
+        u = z - F.softplus((z - hi) * tau) / tau        # smooth min(z, hi)
+        return lo + F.softplus((u - lo) * tau) / tau    # smooth max
+
+    @classmethod
+    def _ste_clamp(cls, z, lo, hi, tau):
+        """Hard-forward, soft-backward clamp (straight-through)."""
+        hard = z.clamp(lo, hi)
+        soft = cls._soft_clamp(z, lo, hi, tau)
+        return soft + (hard - soft).detach()
+
+    # ---------- core forward ----------
+    def forward(self, img):
+        """
+        Albumentations formula:
+            y = clip(alpha * x + beta * M)
+        where M = max_pixel_value (default) or mean(x).
+        """
+        y = img.to(torch.float32)
+        M = 1.0 if self.by_max else self._img_mean(y)
+        y = self.alpha * y + self.beta * M
+
+        lo, hi = self._dtype_bounds(img, 1.0)
+
+        if self.ste:
+            y = self._ste_clamp(y, lo, hi, self.tau)
+        else:
+            y = y.clamp(lo, hi)
+
+        return y.type_as(img)
+
+    # -------------- H_ops required by your pipeline --------------
+    def H(self, x, **kwargs):
+        # x expected in shape (B, C, H, W) and range [0,1] or [-1,1] (your choice)
+        return self.forward(x)
+
+    def H_pinv(self, x):
+        # Brightness shift + clip is not strictly invertible; identity is pragmatic
         return self.H(x)
 
 

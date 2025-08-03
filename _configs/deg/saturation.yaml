@@ -1,0 +1,8 @@
+name: "saturation"
+alpha: 1.0
+beta: 0.8 
+ste: False
+tau: 40
+noise: #n in A(x) + n
+  name: none
+  sigma: none
