@@ -8,6 +8,7 @@ from datasets.imagenet import get_imagenet_dataset, get_imagenet_loader
 from datasets.kodak import get_kodak_dataset
 from datasets.celebahq import get_celeba_hq_dataset, get_celeba_hq_loader
 from utils.distributed import get_logger
+from datasets.sri import get_sri_dataset, get_sri_loader
 
 
 class ZipDataset(Dataset):
@@ -46,6 +47,11 @@ def build_one_dataset(cfg, dataset_attr="dataset"):
 
     if "CelebAHQ" in cfg_dataset.name:
         dset = get_celeba_hq_dataset(**cfg_dataset)
+    
+    if "SRI" in cfg_dataset.name:
+        dset = get_sri_dataset(**cfg_dataset)
+    
+
 
     return dset
 
@@ -76,4 +82,6 @@ def build_loader(cfg, dataset_attr="dataset"):
             loader = get_lsun_loader(dset, **cfg.loader)
         elif "CelebAHQ" in cfg_dataset.name:
             loader = get_celeba_hq_loader(dset, **cfg.loader)
+        elif "SRI" in cfg_dataset.name:
+            loader = get_sri_loader(dset, **cfg.loader)
     return loader
